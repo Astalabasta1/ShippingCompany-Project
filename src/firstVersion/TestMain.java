@@ -29,7 +29,10 @@ public class TestMain {
 		double order_volume = order.get(0) * laptop_volume + order.get(1) * mouse_volume + 
 							  order.get(2) * desktop_volume + order.get(3) * LCD_screen_volume;
 		
-		System.out.println("Order volume: " + order_volume);
+		// Convert volume to cubic meters
+		order_volume = order_volume/1_000_000;
+		
+		System.out.println("Order volume: " + order_volume + " m^3");
 		
 		// Compute total weight of the shipment
 		double laptop_weight = 6.5;
@@ -40,16 +43,69 @@ public class TestMain {
 		double order_weight = order.get(0) * laptop_weight + order.get(1) * mouse_weight + 
 				  			  order.get(2) * desktop_weight + order.get(3) * LCD_screen_weight;
 		
-		System.out.println("Order weight : " + order_weight);
+		System.out.println("Order weight : " + order_weight + " kg");
 		
 		// Compute total volume of available containers
+		double containerL_volume = 2.59 * 2.43 * 12.01;
+		double containerS_volume = 2.59 * 2.43 * 6.06;
+		
+		System.out.println("Container(L) Volume : " + containerL_volume);
+		System.out.println("Container(S) volume : " + containerS_volume);
 		
 		// Select the type of container according to shipment volume
+		double containerL_number = order_volume / containerL_volume;
+		containerL_number = Math.ceil(containerL_number);
+		System.out.println(containerL_number);
+		
+		double total_price = containerL_number * 1800;
+		System.out.println("Total Price: " + total_price);
 		
 		// Compare suitable and lower price shipping methods
 		
-		// Print the results?? - How many of which container at which price?
+			// Calculate possible container combinations
+		ArrayList container_L = new ArrayList();
+		ArrayList container_S = new ArrayList();
 		
+		for (int i = (int) containerL_number; i >= 0; i--) {
+			for (int j = 0; j < 3 * containerL_number; j++) {
+				if (i * containerL_volume + j * containerS_volume >= order_volume) {
+					container_L.add(i);
+					container_S.add(j);
+					break;
+				}
+			}
+		}
+		
+		for(Object x: container_L) {
+			System.out.println(x);
+		}
+		System.out.println();
+		for(Object y: container_S) {
+			System.out.println(y);
+		}
+		
+			// Go through all of them and save the best one
+		int[] min = {(int) container_L.get(0), (int) container_S.get(0)};
+		for (int i = 1; i < container_L.size(); i++) {
+			if (( (int) container_L.get(i) * 1800) + ( (int) container_S.get(i) * 1200) < (min[0] * 1800) + (min[1] * 1200)) {
+				min[0] = (int) container_L.get(i);
+				min[1] = (int) container_S.get(i);
+			}
+		}
+		
+		// If there is a small container included (max 1 if there is a little volume leftover) we have to check how heavy it is to know the cost
+		if (min[1] != 0) {
+			double volume_left = order_volume - min[0] * containerL_volume;
+			double weight_container_S;
+			
+		}
+		
+		
+		// Total price = x * Price of ContainerL + y * Volume of ContainerS
+		int final_price = 1800 * min[0] + 1200 * min[1];
+		
+		// Print the results?? - How many of which container at which price?
+		System.out.println("Lowest price: " + final_price + "$ - with " + min[0] + " Large containers and " + min[1] + " Small containers");
 		
 
 	}
