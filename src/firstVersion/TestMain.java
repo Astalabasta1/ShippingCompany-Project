@@ -94,15 +94,69 @@ public class TestMain {
 		}
 		
 		// If there is a small container included (max 1 if there is a little volume leftover) we have to check how heavy it is to know the cost
-		if (min[1] != 0) {
-			double volume_left = order_volume - min[0] * containerL_volume;
-			double weight_container_S;
+		ArrayList<Integer> list_increasing_kg_per_volume = new ArrayList<Integer>();
+		Collections.addAll(list_increasing_kg_per_volume, laptop_order, mouse_order, desktop_order, LCD_screen_order);
+		
+		// TODO - SORT OR CREATE THE LIST BASED ON THE HIGHEST WEIGHT/VOLUME
+		
+		int x = 1200; // initialize price of small container to large
+		
+		//min[1] != 0
+		if (true) {
+			double volume_left = min[0] * containerL_volume - order_volume;
+			System.out.println("Volume left: " + volume_left);
+			double weight_container_S = 0;	
+			outerloop:
+			for (int i = 0; i < list_increasing_kg_per_volume.size(); i++) {
+				for (int j = 0; j < list_increasing_kg_per_volume.get(i); j++) {
+					switch(i) {
+					case 0:
+						System.out.println("Test---1");
+						if (volume_left - laptop_volume/1_000_000 < 0) {
+							break outerloop; 
+						}
+						volume_left = volume_left - laptop_volume/1_000_000;
+						System.out.println(volume_left);
+						weight_container_S = weight_container_S + laptop_weight;
+						break;
+					case 1:
+						System.out.println("Test---2");
+						if (volume_left - mouse_volume/1_000_000 < 0) {
+							break outerloop; 
+						}
+						volume_left = volume_left - mouse_volume/1_000_000;
+						System.out.println(volume_left);
+						weight_container_S = weight_container_S + mouse_weight;
+						break;
+					case 2:
+						System.out.println("Test---3");
+						if (volume_left - desktop_volume/1_000_000 < 0) {
+							break outerloop; 
+						}
+						volume_left = volume_left - desktop_volume/1_000_000;
+						System.out.println(volume_left);
+						weight_container_S = weight_container_S + desktop_weight;
+						break;
+					default:
+						System.out.println("Test---4");	
+						if (volume_left - LCD_screen_volume/1_000_000 < 0) {
+							break outerloop; 
+						}
+						volume_left = volume_left - LCD_screen_volume/1_000_000;
+						System.out.println(volume_left);
+						weight_container_S = weight_container_S + LCD_screen_weight;
+					}
+				}
+			}
 			
+			System.out.println("Weight of the small container: " + weight_container_S);
+			if (weight_container_S <= 500) {
+				x = 1000;
+			}
 		}
 		
-		
 		// Total price = x * Price of ContainerL + y * Volume of ContainerS
-		int final_price = 1800 * min[0] + 1200 * min[1];
+		int final_price = 1800 * min[0] + x * min[1];
 		
 		// Print the results?? - How many of which container at which price?
 		System.out.println("Lowest price: " + final_price + "$ - with " + min[0] + " Large containers and " + min[1] + " Small containers");
